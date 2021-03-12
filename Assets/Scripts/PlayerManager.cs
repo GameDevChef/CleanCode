@@ -23,7 +23,7 @@ namespace GameDevChef.DirtyCode
         private float currentShotWaitTime;
         private float currentRotationY;
         private float currentRotationX;
-        private bool running;
+        private bool isRunningEnabled;
 
         private void Awake()
         {
@@ -55,7 +55,7 @@ namespace GameDevChef.DirtyCode
             var moveVector = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
             var worldMoveVector = transform.TransformDirection(moveVector);
             worldMoveVector = new Vector3(worldMoveVector.x, 0f, worldMoveVector.z);
-            if (running)
+            if (isRunningEnabled)
             {
                 moveSpeed = runSpeed;
             }
@@ -80,11 +80,11 @@ namespace GameDevChef.DirtyCode
 
             if (Input.GetKey(KeyCode.LeftShift))
             {
-                running = true;
+                isRunningEnabled = true;
             }
             else
             {
-                running = false;
+                isRunningEnabled = false;
             }
         }
 
