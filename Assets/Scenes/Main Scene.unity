@@ -3688,7 +3688,7 @@ MonoBehaviour:
   rifleTransParent: {fileID: 1076979108}
   walkSpeed: 5
   runSpeed: 10
-  rotSpeed: 60
+  rotSpeed: 50
   mouseSens: 1
   source: {fileID: 904319585}
 --- !u!82 &904319585
@@ -10319,7 +10319,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27dd21dcc125743409cedc171792f7f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioSource: {fileID: 4953022232768435169}
 --- !u!1 &4953162197231241698
 GameObject:
   m_ObjectHideFlags: 0

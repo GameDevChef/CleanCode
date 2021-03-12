@@ -64,7 +64,7 @@ namespace GameDevChef.DirtyCode
                 moveSpeed = walkSpeed;
             }
 
-            rb.AddForce(worldMoveVector.normalized * Time.deltaTime * moveSpeed, ForceMode.Force);
+            rb.velocity = worldMoveVector.normalized * moveSpeed;
         }
 
         private void Update()
