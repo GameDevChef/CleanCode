@@ -51,18 +51,10 @@ namespace GameDevChef.DirtyCode
 
         private void FixedUpdate()
         {
-            float moveSpeed;
+            float moveSpeed = isRunningEnabled ? runSpeed : walkSpeed;
             var moveVector = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
             var worldMoveVector = transform.TransformDirection(moveVector);
             worldMoveVector = new Vector3(worldMoveVector.x, 0f, worldMoveVector.z);
-            if (isRunningEnabled)
-            {
-                moveSpeed = runSpeed;
-            }
-            else
-            {
-                moveSpeed = walkSpeed;
-            }
             rigidbody.velocity = worldMoveVector.normalized * moveSpeed;
         }
 
