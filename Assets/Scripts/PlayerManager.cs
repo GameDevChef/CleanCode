@@ -113,7 +113,7 @@ namespace GameDevChef.DirtyCode
 
             }
 
-            Rotate();
+            RotatePlayerObject();
 
             currentShotWaitTime += Time.deltaTime;
             if (Input.GetMouseButton(0) && currentShotWaitTime > holdWeapon.GetShootingInterval() && !HasNotEnoughAmmo())
@@ -171,7 +171,7 @@ namespace GameDevChef.DirtyCode
             return currentAmmoNumber <= 0;
         }
 
-        private void Rotate()
+        private void RotatePlayerObject()
         {
             float yaw = Input.GetAxis("Mouse X") * Time.deltaTime * rotationSpeed * mouseSensitivity;
             float pitch = Input.GetAxis("Mouse Y") * Time.deltaTime * rotationSpeed * mouseSensitivity;
