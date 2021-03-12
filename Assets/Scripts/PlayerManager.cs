@@ -110,46 +110,60 @@ namespace GameDevChef.DirtyCode
                 switch (holdWeapon.GetWeaponType())
                 {
                     case WeaponType.Pistol:
-                        mainAudioSource.clip = holdWeapon.GetShotSound();
-                        mainAudioSource.Stop();
-                        mainAudioSource.Play();
-                        if (Physics.Raycast(Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)), out RaycastHit hit1, holdWeapon.GetWeaponRange()))
-                        {
-                            EnemyManager controller = hit1.collider.GetComponentInParent<EnemyManager>();
-                            Vector3 direction = hit1.point - holdWeapon.GetBulletSpawnTransform().position;
-                            if (controller)
-                            {
-                                controller.OnEnemyShot(direction, hit1.collider.GetComponent<Rigidbody>(), holdWeapon.GetWeaponDamage());
-                            }
-                        }
+                        ShootPistol();
                         break;
                     case WeaponType.Rilfe:
-                        mainAudioSource.clip = holdWeapon.GetShotSound();
-                        mainAudioSource.Stop();
-                        mainAudioSource.Play();
-                        if (Physics.Raycast(Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)), out RaycastHit hit2, holdWeapon.GetWeaponRange()))
-                        {
-                            EnemyManager controller = hit2.collider.GetComponentInParent<EnemyManager>();
-                            Vector3 direction = hit2.point - holdWeapon.GetBulletSpawnTransform().position;
-                            if (controller)
-                            {
-                                controller.OnEnemyShot(direction, hit2.collider.GetComponent<Rigidbody>(), holdWeapon.GetWeaponDamage());
-                            }
-                        }
+                        ShootRifle();
                         break;
                     case WeaponType.RPG:
-                        mainAudioSource.clip = holdWeapon.GetShotSound();
-                        mainAudioSource.Stop();
-                        mainAudioSource.Play();
-                        Projectile projectile = Instantiate(holdWeapon.GetProjectilePrefab(),
-                            holdWeapon.GetBulletSpawnTransform().position,
-                            holdWeapon.GetBulletSpawnTransform().rotation);
-                        projectile.Init(holdWeapon.GetWeaponDamage(), holdWeapon.GetProjectileSpeed(), holdWeapon.GetImpactClip());
+                        ShootRPG();
                         break;
                     default:
                         break;
                 }
+            }
+        }
 
+        private void ShootRPG()
+        {
+            mainAudioSource.clip = holdWeapon.GetShotSound();
+            mainAudioSource.Stop();
+            mainAudioSource.Play();
+            Projectile projectile = Instantiate(holdWeapon.GetProjectilePrefab(),
+                holdWeapon.GetBulletSpawnTransform().position,
+                holdWeapon.GetBulletSpawnTransform().rotation);
+            projectile.Init(holdWeapon.GetWeaponDamage(), holdWeapon.GetProjectileSpeed(), holdWeapon.GetImpactClip());
+        }
+
+        private void ShootRifle()
+        {
+            mainAudioSource.clip = holdWeapon.GetShotSound();
+            mainAudioSource.Stop();
+            mainAudioSource.Play();
+            if (Physics.Raycast(Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)), out RaycastHit hit2, holdWeapon.GetWeaponRange()))
+            {
+                EnemyManager controller = hit2.collider.GetComponentInParent<EnemyManager>();
+                Vector3 direction = hit2.point - holdWeapon.GetBulletSpawnTransform().position;
+                if (controller)
+                {
+                    controller.OnEnemyShot(direction, hit2.collider.GetComponent<Rigidbody>(), holdWeapon.GetWeaponDamage());
+                }
+            }
+        }
+
+        private void ShootPistol()
+        {
+            mainAudioSource.clip = holdWeapon.GetShotSound();
+            mainAudioSource.Stop();
+            mainAudioSource.Play();
+            if (Physics.Raycast(Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)), out RaycastHit hit1, holdWeapon.GetWeaponRange()))
+            {
+                EnemyManager controller = hit1.collider.GetComponentInParent<EnemyManager>();
+                Vector3 direction = hit1.point - holdWeapon.GetBulletSpawnTransform().position;
+                if (controller)
+                {
+                    controller.OnEnemyShot(direction, hit1.collider.GetComponent<Rigidbody>(), holdWeapon.GetWeaponDamage());
+                }
             }
         }
 
