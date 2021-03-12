@@ -68,30 +68,14 @@ namespace GameDevChef.DirtyCode
 
         private void Update()
         {
-            if(Input.mouseScrollDelta.y < 0)
-            {
-                currentWeaponIndex--;
-                if (currentWeaponIndex < 0)
-                    currentWeaponIndex = avaliableWeapons.Length - 1;
-                holdWeapon = avaliableWeapons[currentWeaponIndex];
-                foreach (var weapon in avaliableWeapons)
-                {
-                    weapon.gameObject.SetActive(false);
-                }
-                holdWeapon.gameObject.SetActive(true);
-            }
+            RotatePlayerObject();
+            HandleShootingWeapon();
+            HandleSwitchingWeapon();
+            currentShotWaitTime += Time.deltaTime;
 
-            if (Input.mouseScrollDelta.y > 0)
+            if (Input.GetKeyDown(KeyCode.R))
             {
-                currentWeaponIndex++;
-                if (currentWeaponIndex > avaliableWeapons.Length - 1)
-                    currentWeaponIndex = 0;
-                holdWeapon = avaliableWeapons[currentWeaponIndex];
-                foreach (var weapon in avaliableWeapons)
-                {
-                    weapon.gameObject.SetActive(false);
-                }
-                holdWeapon.gameObject.SetActive(true);
+                Reload();
             }
 
             if (Input.GetKey(KeyCode.LeftShift))
@@ -102,20 +86,23 @@ namespace GameDevChef.DirtyCode
             {
                 running = false;
             }
+        }
 
-            if (Input.GetKeyDown(KeyCode.R))
+        private void HandleSwitchingWeapon()
+        {
+            if (Input.mouseScrollDelta.y < 0)
             {
-                currentShotWaitTime = 0f;
-                currentAmmoNumber = 20;
-                mainAudioSource.clip = holdWeapon.GetReloadSound();
-                mainAudioSource.Stop();
-                mainAudioSource.Play();
-
+                SwitchToPreviousWeapon();
             }
 
-            RotatePlayerObject();
+            if (Input.mouseScrollDelta.y > 0)
+            {
+                SwitchToNextWeapon();
+            }
+        }
 
-            currentShotWaitTime += Time.deltaTime;
+        private void HandleShootingWeapon()
+        {
             if (Input.GetMouseButton(0) && currentShotWaitTime > holdWeapon.GetShootingInterval() && !HasNotEnoughAmmo())
             {
                 currentShotWaitTime = 0;
@@ -154,16 +141,51 @@ namespace GameDevChef.DirtyCode
                         mainAudioSource.clip = holdWeapon.GetShotSound();
                         mainAudioSource.Stop();
                         mainAudioSource.Play();
-                        Projectile projectile = Instantiate(holdWeapon.GetProjectilePrefab(), 
-                            holdWeapon.GetBulletSpawnTransform().position, 
+                        Projectile projectile = Instantiate(holdWeapon.GetProjectilePrefab(),
+                            holdWeapon.GetBulletSpawnTransform().position,
                             holdWeapon.GetBulletSpawnTransform().rotation);
-                        projectile.Init(holdWeapon.GetWeaponDamage(), holdWeapon.GetProjectileSpeed(), holdWeapon.GetImpactClip());                       
+                        projectile.Init(holdWeapon.GetWeaponDamage(), holdWeapon.GetProjectileSpeed(), holdWeapon.GetImpactClip());
                         break;
                     default:
                         break;
                 }
-               
+
             }
+        }
+
+        private void Reload()
+        {
+            currentShotWaitTime = 0f;
+            currentAmmoNumber = 20;
+            mainAudioSource.clip = holdWeapon.GetReloadSound();
+            mainAudioSource.Stop();
+            mainAudioSource.Play();
+        }
+
+        private void SwitchToNextWeapon()
+        {
+            currentWeaponIndex++;
+            if (currentWeaponIndex > avaliableWeapons.Length - 1)
+                currentWeaponIndex = 0;
+            holdWeapon = avaliableWeapons[currentWeaponIndex];
+            foreach (var weapon in avaliableWeapons)
+            {
+                weapon.gameObject.SetActive(false);
+            }
+            holdWeapon.gameObject.SetActive(true);
+        }
+
+        private void SwitchToPreviousWeapon()
+        {
+            currentWeaponIndex--;
+            if (currentWeaponIndex < 0)
+                currentWeaponIndex = avaliableWeapons.Length - 1;
+            holdWeapon = avaliableWeapons[currentWeaponIndex];
+            foreach (var weapon in avaliableWeapons)
+            {
+                weapon.gameObject.SetActive(false);
+            }
+            holdWeapon.gameObject.SetActive(true);
         }
 
         private bool HasNotEnoughAmmo()
