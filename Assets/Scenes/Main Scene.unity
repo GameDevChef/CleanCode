@@ -3681,16 +3681,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5ccf19f5baaed141a9a201a15fdf6da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weapons:
+  avaliableWeapons:
   - {fileID: 1487772698757619}
   - {fileID: 8480955938167440800}
   - {fileID: 4953162197231241699}
-  rifleTransParent: {fileID: 1076979108}
+  rifleTransformParent: {fileID: 1076979108}
   walkSpeed: 5
   runSpeed: 10
-  rotSpeed: 60
-  mouseSens: 1
-  source: {fileID: 904319585}
+  rotationSpeed: 30
+  mouseSensitivity: 1
+  mainAudioSource: {fileID: 904319585}
 --- !u!82 &904319585
 AudioSource:
   m_ObjectHideFlags: 0
@@ -10319,7 +10319,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27dd21dcc125743409cedc171792f7f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioSource: {fileID: 4953022232768435169}
 --- !u!1 &4953162197231241698
 GameObject:
   m_ObjectHideFlags: 0

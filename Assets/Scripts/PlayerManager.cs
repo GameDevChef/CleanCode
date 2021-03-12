@@ -8,26 +8,26 @@ namespace GameDevChef.DirtyCode
 {
     public class PlayerManager : MonoBehaviour
     {
-        [SerializeField] private Weapon[] weapons;
-        [SerializeField] private Transform rifleTransParent;
+        [SerializeField] private Weapon[] avaliableWeapons;
+        [SerializeField] private Transform rifleTransformParent;
         [SerializeField] private float walkSpeed;
         [SerializeField] private float runSpeed;
-        [SerializeField] private float rotSpeed;
-        [SerializeField] private float mouseSens;
-        [SerializeField] private AudioSource source;
+        [SerializeField] private float rotationSpeed;
+        [SerializeField] private float mouseSensitivity;
+        [SerializeField] private AudioSource mainAudioSource;
 
-        private Rigidbody rb;
+        private Rigidbody rigidbody;
         private Weapon holdWeapon;
         private int currentWeaponIndex;
-        private float curAmmo;
-        private float curWaitTime;
-        private float curRotationY;
-        private float curRotationX;
+        private float currentAmmoNumber;
+        private float currentShotWaitTime;
+        private float currentRotationY;
+        private float currentRotationX;
         private bool running;
 
         private void Awake()
         {
-            rb = GetComponent<Rigidbody>();
+            rigidbody = GetComponent<Rigidbody>();
         }
 
         private void Start()
@@ -37,15 +37,15 @@ namespace GameDevChef.DirtyCode
 
         private void SetActiveWeaponAndInitializeVariables()
         {
-            holdWeapon = weapons[currentWeaponIndex];
-            foreach (var weapon in weapons)
+            holdWeapon = avaliableWeapons[currentWeaponIndex];
+            foreach (var weapon in avaliableWeapons)
             {
                 weapon.gameObject.SetActive(false);
             }
             holdWeapon.gameObject.SetActive(true);
-            curAmmo = 20;
-            curRotationY = transform.eulerAngles.y;
-            curRotationX = transform.eulerAngles.x;
+            currentAmmoNumber = 20;
+            currentRotationY = transform.eulerAngles.y;
+            currentRotationX = transform.eulerAngles.x;
             Cursor.lockState = CursorLockMode.Locked;
         }
 
@@ -63,8 +63,7 @@ namespace GameDevChef.DirtyCode
             {
                 moveSpeed = walkSpeed;
             }
-
-            rb.AddForce(worldMoveVector.normalized * Time.deltaTime * moveSpeed, ForceMode.Force);
+            rigidbody.velocity = worldMoveVector.normalized * moveSpeed;
         }
 
         private void Update()
@@ -73,9 +72,9 @@ namespace GameDevChef.DirtyCode
             {
                 currentWeaponIndex--;
                 if (currentWeaponIndex < 0)
-                    currentWeaponIndex = weapons.Length - 1;
-                holdWeapon = weapons[currentWeaponIndex];
-                foreach (var weapon in weapons)
+                    currentWeaponIndex = avaliableWeapons.Length - 1;
+                holdWeapon = avaliableWeapons[currentWeaponIndex];
+                foreach (var weapon in avaliableWeapons)
                 {
                     weapon.gameObject.SetActive(false);
                 }
@@ -85,10 +84,10 @@ namespace GameDevChef.DirtyCode
             if (Input.mouseScrollDelta.y > 0)
             {
                 currentWeaponIndex++;
-                if (currentWeaponIndex > weapons.Length - 1)
+                if (currentWeaponIndex > avaliableWeapons.Length - 1)
                     currentWeaponIndex = 0;
-                holdWeapon = weapons[currentWeaponIndex];
-                foreach (var weapon in weapons)
+                holdWeapon = avaliableWeapons[currentWeaponIndex];
+                foreach (var weapon in avaliableWeapons)
                 {
                     weapon.gameObject.SetActive(false);
                 }
@@ -106,27 +105,27 @@ namespace GameDevChef.DirtyCode
 
             if (Input.GetKeyDown(KeyCode.R))
             {
-                curWaitTime = 0f;
-                curAmmo = 20;
-                source.clip = holdWeapon.GetReloadSound();
-                source.Stop();
-                source.Play();
+                currentShotWaitTime = 0f;
+                currentAmmoNumber = 20;
+                mainAudioSource.clip = holdWeapon.GetReloadSound();
+                mainAudioSource.Stop();
+                mainAudioSource.Play();
 
             }
 
             Rotate();
 
-            curWaitTime += Time.deltaTime;
-            if (Input.GetMouseButton(0) && curWaitTime > holdWeapon.GetShootingInterval() && !HasNotEnoughAmmo())
+            currentShotWaitTime += Time.deltaTime;
+            if (Input.GetMouseButton(0) && currentShotWaitTime > holdWeapon.GetShootingInterval() && !HasNotEnoughAmmo())
             {
-                curWaitTime = 0;
-                curAmmo--;
+                currentShotWaitTime = 0;
+                currentAmmoNumber--;
                 switch (holdWeapon.GetWeaponType())
                 {
                     case WeaponType.Pistol:
-                        source.clip = holdWeapon.GetShotSound();
-                        source.Stop();
-                        source.Play();
+                        mainAudioSource.clip = holdWeapon.GetShotSound();
+                        mainAudioSource.Stop();
+                        mainAudioSource.Play();
                         if (Physics.Raycast(Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)), out RaycastHit hit1, holdWeapon.GetWeaponRange()))
                         {
                             EnemyManager controller = hit1.collider.GetComponentInParent<EnemyManager>();
@@ -138,9 +137,9 @@ namespace GameDevChef.DirtyCode
                         }
                         break;
                     case WeaponType.Rilfe:
-                        source.clip = holdWeapon.GetShotSound();
-                        source.Stop();
-                        source.Play();
+                        mainAudioSource.clip = holdWeapon.GetShotSound();
+                        mainAudioSource.Stop();
+                        mainAudioSource.Play();
                         if (Physics.Raycast(Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)), out RaycastHit hit2, holdWeapon.GetWeaponRange()))
                         {
                             EnemyManager controller = hit2.collider.GetComponentInParent<EnemyManager>();
@@ -152,9 +151,9 @@ namespace GameDevChef.DirtyCode
                         }
                         break;
                     case WeaponType.RPG:
-                        source.clip = holdWeapon.GetShotSound();
-                        source.Stop();
-                        source.Play();
+                        mainAudioSource.clip = holdWeapon.GetShotSound();
+                        mainAudioSource.Stop();
+                        mainAudioSource.Play();
                         Projectile projectile = Instantiate(holdWeapon.GetProjectilePrefab(), 
                             holdWeapon.GetBulletSpawnTransform().position, 
                             holdWeapon.GetBulletSpawnTransform().rotation);
@@ -169,18 +168,18 @@ namespace GameDevChef.DirtyCode
 
         private bool HasNotEnoughAmmo()
         {
-            return curAmmo <= 0;
+            return currentAmmoNumber <= 0;
         }
 
         private void Rotate()
         {
-            float yaw = Input.GetAxis("Mouse X") * Time.deltaTime * rotSpeed * mouseSens;
-            float pitch = Input.GetAxis("Mouse Y") * Time.deltaTime * rotSpeed * mouseSens;
-            curRotationY += yaw;
-            curRotationX -= pitch;
-            curRotationX = Mathf.Clamp(curRotationX, -90, 90);
-            rifleTransParent.localRotation = Quaternion.Euler(curRotationX, 0, 0);
-            transform.localRotation = Quaternion.Euler(0, curRotationY, 0);
+            float yaw = Input.GetAxis("Mouse X") * Time.deltaTime * rotationSpeed * mouseSensitivity;
+            float pitch = Input.GetAxis("Mouse Y") * Time.deltaTime * rotationSpeed * mouseSensitivity;
+            currentRotationY += yaw;
+            currentRotationX -= pitch;
+            currentRotationX = Mathf.Clamp(currentRotationX, -90, 90);
+            rifleTransformParent.localRotation = Quaternion.Euler(currentRotationX, 0, 0);
+            transform.localRotation = Quaternion.Euler(0, currentRotationY, 0);
         }
     }
 }
