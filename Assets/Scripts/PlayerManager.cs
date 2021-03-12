@@ -95,7 +95,7 @@ namespace GameDevChef.DirtyCode
 
         private void HandleShootingWeapon()
         {
-            if (Input.GetMouseButton(0) && currentShotWaitTime > holdWeapon.GetShootingInterval() && !HasNotEnoughAmmo())
+            if (Input.GetMouseButton(0) && currentShotWaitTime > holdWeapon.GetShootingInterval() && HasEnoughAmmo())
             {
                 currentShotWaitTime = 0;
                 currentAmmoNumber--;
@@ -194,9 +194,9 @@ namespace GameDevChef.DirtyCode
             holdWeapon.gameObject.SetActive(true);
         }
 
-        private bool HasNotEnoughAmmo()
+        private bool HasEnoughAmmo()
         {
-            return currentAmmoNumber <= 0;
+            return currentAmmoNumber > 0;
         }
 
         private void RotatePlayerObject()
