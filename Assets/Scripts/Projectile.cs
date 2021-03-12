@@ -23,7 +23,6 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(other.transform.root.name);
         if(other.transform.root.TryGetComponent(out EnemyManager enemy))
         {
             enemy.OnEnemyShot(transform.forward, other.GetComponent<Rigidbody>(), damage);
