@@ -3786,6 +3786,7 @@ GameObject:
   - component: {fileID: 904319586}
   - component: {fileID: 904319584}
   - component: {fileID: 904319585}
+  - component: {fileID: 904319587}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -3841,8 +3842,8 @@ MonoBehaviour:
   rifleTransformParent: {fileID: 1076979108}
   walkSpeed: 5
   runSpeed: 10
-  rotationSpeed: 30
-  mouseSensitivity: 1
+  rotationSpeed: 60
+  mouseSensitivity: 2
   mainAudioSource: {fileID: 904319585}
   ammoText: {fileID: 413519341}
   maxAmmoNumber: 30
@@ -3958,6 +3959,21 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &904319587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 904319581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 663ef16a5d9cc024c8c4f0b647663962, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shootingButton: 323
+  runningButton: 304
+  reloadButton: 114
 --- !u!1 &919797632
 GameObject:
   m_ObjectHideFlags: 0

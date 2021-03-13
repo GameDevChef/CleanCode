@@ -18,6 +18,7 @@ namespace GameDevChef.DirtyCode
         [SerializeField] private Text ammoText;
         [SerializeField] private int maxAmmoNumber;
 
+        private InputReceiver inputReciever;
         private Rigidbody rigidbody;
         private Weapon holdWeapon;
         private int currentWeaponIndex;
@@ -25,11 +26,11 @@ namespace GameDevChef.DirtyCode
         private float currentShotWaitTime;
         private float currentRotationY;
         private float currentRotationX;
-        private bool isRunningEnabled;
 
         private void Awake()
         {
             rigidbody = GetComponent<Rigidbody>();
+            inputReciever = GetComponent<InputReceiver>();
         }
 
         private void Start()
@@ -59,10 +60,10 @@ namespace GameDevChef.DirtyCode
 
         private void FixedUpdate()
         {
-            var moveVector = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
+            var moveVector = new Vector3(inputReciever.HorizontalInput, 0f, inputReciever.VerticalInput);
             var worldMoveVector = transform.TransformDirection(moveVector);
             worldMoveVector = new Vector3(worldMoveVector.x, 0f, worldMoveVector.z);
-            float moveSpeed = isRunningEnabled ? runSpeed : walkSpeed;
+            float moveSpeed = inputReciever.IsRunning ? runSpeed : walkSpeed;
             rigidbody.velocity = worldMoveVector.normalized * moveSpeed;
         }
 
@@ -73,25 +74,16 @@ namespace GameDevChef.DirtyCode
             HandleSwitchingWeapon();
             currentShotWaitTime += Time.deltaTime;
 
-            if (Input.GetKeyDown(KeyCode.R))
+            if (inputReciever.IsReloading)
             {
                 Reload();
-            }
-
-            if (Input.GetKey(KeyCode.LeftShift))
-            {
-                isRunningEnabled = true;
-            }
-            else
-            {
-                isRunningEnabled = false;
             }
         }
 
         private void RotatePlayerObject()
         {
-            float yaw = Input.GetAxis("Mouse X") * Time.deltaTime * rotationSpeed * mouseSensitivity;
-            float pitch = Input.GetAxis("Mouse Y") * Time.deltaTime * rotationSpeed * mouseSensitivity;
+            float yaw = inputReciever.MouseInputX * Time.deltaTime * rotationSpeed * mouseSensitivity;
+            float pitch = inputReciever.MouseInputY * Time.deltaTime * rotationSpeed * mouseSensitivity;
             currentRotationY += yaw;
             currentRotationX -= pitch;
             currentRotationX = Mathf.Clamp(currentRotationX, -90, 90);
@@ -125,7 +117,7 @@ namespace GameDevChef.DirtyCode
 
         private bool CheckIfCanShoot()
         {
-            return Input.GetMouseButton(0) && currentShotWaitTime > holdWeapon.GetShootingInterval() && HasEnoughAmmo();
+            return inputReciever.IsShooting && currentShotWaitTime > holdWeapon.GetShootingInterval() && HasEnoughAmmo();
         }
 
         private bool HasEnoughAmmo()
@@ -176,7 +168,7 @@ namespace GameDevChef.DirtyCode
             Projectile projectile = Instantiate(holdWeapon.GetProjectilePrefab(),
                 holdWeapon.GetBulletSpawnTransform().position,
                 holdWeapon.GetBulletSpawnTransform().rotation);
-            projectile.Init(holdWeapon.GetWeaponDamage(), holdWeapon.GetProjectileSpeed(), holdWeapon.GetImpactClip());
+            projectile.Init(holdWeapon);
         }
 
         private void HandleSwitchingWeapon()
