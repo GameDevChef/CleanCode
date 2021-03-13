@@ -13,11 +13,11 @@ public class Projectile : MonoBehaviour
     {
         rigidody = GetComponent<Rigidbody>();
     }
-    public void Init(int damage, int speed, AudioClip impactClip)
+    public void Init(Weapon weapon)
     {
-        this.damage = damage;
-        this.impactClip = impactClip;
-        rigidody.velocity = transform.forward * speed;
+        this.damage = weapon.GetWeaponDamage();
+        this.impactClip = weapon.GetImpactClip();
+        rigidody.velocity = transform.forward * weapon.GetProjectileSpeed();
 
     }
 
