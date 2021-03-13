@@ -16,6 +16,7 @@ namespace GameDevChef.DirtyCode
         [SerializeField] private float mouseSensitivity;
         [SerializeField] private AudioSource mainAudioSource;
         [SerializeField] private Text ammoText;
+        [SerializeField] private int maxAmmoNumber;
 
         private Rigidbody rigidbody;
         private Weapon holdWeapon;
@@ -44,7 +45,7 @@ namespace GameDevChef.DirtyCode
                 weapon.gameObject.SetActive(false);
             }
             holdWeapon.gameObject.SetActive(true);
-            currentAmmoNumber = 20;
+            currentAmmoNumber = maxAmmoNumber;
             currentRotationY = transform.eulerAngles.y;
             currentRotationX = transform.eulerAngles.x;
             Cursor.lockState = CursorLockMode.Locked;
@@ -166,7 +167,7 @@ namespace GameDevChef.DirtyCode
         private void Reload()
         {
             currentShotWaitTime = 0f;
-            currentAmmoNumber = 20;
+            currentAmmoNumber = maxAmmoNumber;
             mainAudioSource.clip = holdWeapon.GetReloadSound();
             mainAudioSource.Stop();
             mainAudioSource.Play();
