@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace GameDevChef.DirtyCode
 {
-    public class PlayerManager : MonoBehaviour
+    public class PlayerShooting : MonoBehaviour
     {
         [SerializeField] private Weapon[] avaliableWeapons;
        
