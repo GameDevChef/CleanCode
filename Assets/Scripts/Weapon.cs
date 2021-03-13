@@ -2,33 +2,56 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public enum WeaponType
-{
-    Pistol, Rilfe, RPG
-}
 
-public class Weapon : MonoBehaviour
+public abstract class Weapon : MonoBehaviour
 {
-    [SerializeField] private WeaponType weaponType;
-    [SerializeField] private float range;
-    [SerializeField] private int damage;
-    [SerializeField] private int projectileSpeed;
+    [SerializeField] protected Transform bulletSpawnTransform;
+    [SerializeField] private AudioSource mainAudioSource;
     [SerializeField] private AudioClip shotClip;
     [SerializeField] private AudioClip reloadClip;
-    [SerializeField] private AudioClip impactClip;
-    [SerializeField] private Projectile projectilePrefab;
-    [SerializeField] private Transform bulletSpawnTransform;
-
+    [SerializeField] protected float range;
+    [SerializeField] private int damage;
+    [SerializeField] private int maxAmmoNumber;
     [SerializeField] private float shootingInterval;
 
-    public WeaponType GetWeaponType()
+    private int currentAmmoNumber;
+
+    private void Awake()
     {
-        return weaponType;
+        currentAmmoNumber = maxAmmoNumber;
+    }
+    public virtual void Shot()
+    {
+        currentAmmoNumber--;
+        PlayWeaponShotSound();
+    }
+    public virtual void Reload()
+    {
+        currentAmmoNumber = maxAmmoNumber;
+        mainAudioSource.clip = reloadClip;
+        ResetAudioSource();
     }
 
-    public float GetWeaponRange()
+    public bool HasEnoughAmmo()
     {
-        return range;
+        return currentAmmoNumber > 0;
+    }
+
+    protected void PlayWeaponShotSound()
+    {
+        mainAudioSource.clip = shotClip;
+        ResetAudioSource();
+    }
+
+    private void ResetAudioSource()
+    {
+        mainAudioSource.Stop();
+        mainAudioSource.Play();
+    }
+
+    public int GetCurrentAmmo()
+    {
+        return currentAmmoNumber;
     }
 
     public int GetWeaponDamage()
@@ -36,35 +59,7 @@ public class Weapon : MonoBehaviour
         return damage;
     }
 
-    public AudioClip GetShotSound()
-    {
-        return shotClip;
-    }
-
-    public AudioClip GetReloadSound()
-    {
-        return reloadClip;
-    }
-
-    public Projectile GetProjectilePrefab()
-    {
-        return projectilePrefab;
-    }
-
-    public int GetProjectileSpeed()
-    {
-        return projectileSpeed;
-    }
-
-    public AudioClip GetImpactClip()
-    {
-        return impactClip;
-    }
-
-    public Transform GetBulletSpawnTransform()
-    {
-        return bulletSpawnTransform;
-    }
+   
 
     public float GetShootingInterval()
     {
