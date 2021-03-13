@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 namespace GameDevChef.DirtyCode
 {
@@ -15,11 +15,12 @@ namespace GameDevChef.DirtyCode
         [SerializeField] private float rotSpeed;
         [SerializeField] private float mouseSens;
         [SerializeField] private AudioSource source;
+        [SerializeField] private Text ammoText;
 
         private Rigidbody rb;
         private Weapon holdWeapon;
         private int currentWeaponIndex;
-        private float curAmmo;
+        private int curAmmo;
         private float curWaitTime;
         private float curRotationY;
         private float curRotationX;
@@ -47,6 +48,7 @@ namespace GameDevChef.DirtyCode
             curRotationY = transform.eulerAngles.y;
             curRotationX = transform.eulerAngles.x;
             Cursor.lockState = CursorLockMode.Locked;
+            SetAmmoText();
         }
 
         private void FixedUpdate()
@@ -111,7 +113,7 @@ namespace GameDevChef.DirtyCode
                 source.clip = holdWeapon.GetReloadSound();
                 source.Stop();
                 source.Play();
-
+                SetAmmoText();
             }
 
             Rotate();
@@ -119,8 +121,10 @@ namespace GameDevChef.DirtyCode
             curWaitTime += Time.deltaTime;
             if (Input.GetMouseButton(0) && curWaitTime > holdWeapon.GetShootingInterval() && !HasNotEnoughAmmo())
             {
+                
                 curWaitTime = 0;
                 curAmmo--;
+                SetAmmoText();
                 switch (holdWeapon.GetWeaponType())
                 {
                     case WeaponType.Pistol:
@@ -181,6 +185,11 @@ namespace GameDevChef.DirtyCode
             curRotationX = Mathf.Clamp(curRotationX, -90, 90);
             rifleTransParent.localRotation = Quaternion.Euler(curRotationX, 0, 0);
             transform.localRotation = Quaternion.Euler(0, curRotationY, 0);
+        }
+
+        public void SetAmmoText()
+        {
+            ammoText.text = curAmmo.ToString();
         }
     }
 }
