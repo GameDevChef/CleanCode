@@ -98,7 +98,7 @@ namespace GameDevChef.DirtyCode
 
         private void HandleShootingWeapon()
         {
-            if (Input.GetMouseButton(0) && currentShotWaitTime > holdWeapon.GetShootingInterval() && HasEnoughAmmo())
+            if (CheckIfCanShoot())
             {
                 currentShotWaitTime = 0;
                 currentAmmoNumber--;
@@ -118,6 +118,11 @@ namespace GameDevChef.DirtyCode
                         break;
                 }
             }
+        }
+
+        private bool CheckIfCanShoot()
+        {
+            return Input.GetMouseButton(0) && currentShotWaitTime > holdWeapon.GetShootingInterval() && HasEnoughAmmo();
         }
 
         private void ShootRPG()
