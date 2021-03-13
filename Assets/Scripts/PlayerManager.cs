@@ -9,27 +9,21 @@ namespace GameDevChef.DirtyCode
     public class PlayerManager : MonoBehaviour
     {
         [SerializeField] private Weapon[] avaliableWeapons;
-        [SerializeField] private Transform rifleTransformParent;
-        [SerializeField] private float walkSpeed;
-        [SerializeField] private float runSpeed;
-        [SerializeField] private float rotationSpeed;
-        [SerializeField] private float mouseSensitivity;
+       
         [SerializeField] private AudioSource mainAudioSource;
         [SerializeField] private Text ammoText;
         [SerializeField] private int maxAmmoNumber;
 
         private InputReceiver inputReciever;
-        private Rigidbody rigidbody;
+
         private Weapon holdWeapon;
         private int currentWeaponIndex;
         private float currentAmmoNumber;
         private float currentShotWaitTime;
-        private float currentRotationY;
-        private float currentRotationX;
+
 
         private void Awake()
         {
-            rigidbody = GetComponent<Rigidbody>();
             inputReciever = GetComponent<InputReceiver>();
         }
 
@@ -47,8 +41,7 @@ namespace GameDevChef.DirtyCode
             }
             holdWeapon.gameObject.SetActive(true);
             currentAmmoNumber = maxAmmoNumber;
-            currentRotationY = transform.eulerAngles.y;
-            currentRotationX = transform.eulerAngles.x;
+          
             Cursor.lockState = CursorLockMode.Locked;
             SetAmmoText();
         }
@@ -56,20 +49,10 @@ namespace GameDevChef.DirtyCode
         public void SetAmmoText()
         {
             ammoText.text = currentAmmoNumber.ToString();
-        }
-
-        private void FixedUpdate()
-        {
-            var moveVector = new Vector3(inputReciever.HorizontalInput, 0f, inputReciever.VerticalInput);
-            var worldMoveVector = transform.TransformDirection(moveVector);
-            worldMoveVector = new Vector3(worldMoveVector.x, 0f, worldMoveVector.z);
-            float moveSpeed = inputReciever.IsRunning ? runSpeed : walkSpeed;
-            rigidbody.velocity = worldMoveVector.normalized * moveSpeed;
-        }
+        }    
 
         private void Update()
         {
-            RotatePlayerObject();
             HandleShootingWeapon();
             HandleSwitchingWeapon();
             currentShotWaitTime += Time.deltaTime;
@@ -78,18 +61,7 @@ namespace GameDevChef.DirtyCode
             {
                 Reload();
             }
-        }
-
-        private void RotatePlayerObject()
-        {
-            float yaw = inputReciever.MouseInputX * Time.deltaTime * rotationSpeed * mouseSensitivity;
-            float pitch = inputReciever.MouseInputY * Time.deltaTime * rotationSpeed * mouseSensitivity;
-            currentRotationY += yaw;
-            currentRotationX -= pitch;
-            currentRotationX = Mathf.Clamp(currentRotationX, -90, 90);
-            rifleTransformParent.localRotation = Quaternion.Euler(currentRotationX, 0, 0);
-            transform.localRotation = Quaternion.Euler(0, currentRotationY, 0);
-        }
+        }  
 
         private void HandleShootingWeapon()
         {
