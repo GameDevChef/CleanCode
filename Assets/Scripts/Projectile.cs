@@ -25,7 +25,8 @@ public class Projectile : MonoBehaviour
     {
         if(other.transform.root.TryGetComponent(out EnemyManager enemy))
         {
-            enemy.OnEnemyShot(transform.forward, other.GetComponent<Rigidbody>(), damage);
+            enemy.ImpactRigidbody(transform.forward, other.GetComponent<Rigidbody>());
+            enemy.TakeDamage(damage);
             AudioSource.PlayClipAtPoint(impactClip, transform.position);
             Destroy(gameObject);
         }

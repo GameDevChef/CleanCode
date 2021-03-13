@@ -25,9 +25,8 @@ namespace GameDevChef.DirtyCode
             }
         }
 
-        public void OnEnemyShot(Vector3 shootDirection, Rigidbody shotRB, int damage)
+        public void ImpactRigidbody(Vector3 shootDirection, Rigidbody shotRB)
         {
-            curHealth -= damage;
             animator.enabled = false;
             foreach (var rb in rigidbodies)
             {
@@ -38,6 +37,11 @@ namespace GameDevChef.DirtyCode
             {
                 shotRB.AddForce(shootDirection.normalized * 100f, ForceMode.Impulse);
             }
+        }
+
+        public void TakeDamage(int damage)
+        {
+            curHealth -= damage;
         }
     }
 }
