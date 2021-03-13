@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 namespace GameDevChef.DirtyCode
 {
@@ -15,6 +15,7 @@ namespace GameDevChef.DirtyCode
         [SerializeField] private float rotationSpeed;
         [SerializeField] private float mouseSensitivity;
         [SerializeField] private AudioSource mainAudioSource;
+        [SerializeField] private Text ammoText;
 
         private Rigidbody rigidbody;
         private Weapon holdWeapon;
@@ -47,6 +48,7 @@ namespace GameDevChef.DirtyCode
             currentRotationY = transform.eulerAngles.y;
             currentRotationX = transform.eulerAngles.x;
             Cursor.lockState = CursorLockMode.Locked;
+            SetAmmoText();
         }
 
         private void FixedUpdate()
@@ -99,6 +101,7 @@ namespace GameDevChef.DirtyCode
             {
                 currentShotWaitTime = 0;
                 currentAmmoNumber--;
+                SetAmmoText();
                 switch (holdWeapon.GetWeaponType())
                 {
                     case WeaponType.Pistol:
@@ -118,6 +121,7 @@ namespace GameDevChef.DirtyCode
 
         private void ShootRPG()
         {
+            
             mainAudioSource.clip = holdWeapon.GetShotSound();
             mainAudioSource.Stop();
             mainAudioSource.Play();
@@ -166,6 +170,7 @@ namespace GameDevChef.DirtyCode
             mainAudioSource.clip = holdWeapon.GetReloadSound();
             mainAudioSource.Stop();
             mainAudioSource.Play();
+            SetAmmoText();
         }
 
         private void SwitchToNextWeapon()
@@ -208,6 +213,11 @@ namespace GameDevChef.DirtyCode
             currentRotationX = Mathf.Clamp(currentRotationX, -90, 90);
             rifleTransformParent.localRotation = Quaternion.Euler(currentRotationX, 0, 0);
             transform.localRotation = Quaternion.Euler(0, currentRotationY, 0);
+        }
+
+        public void SetAmmoText()
+        {
+            ammoText.text = currentAmmoNumber.ToString();
         }
     }
 }
