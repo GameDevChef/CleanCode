@@ -52,6 +52,11 @@ namespace GameDevChef.DirtyCode
             SetAmmoText();
         }
 
+        public void SetAmmoText()
+        {
+            ammoText.text = currentAmmoNumber.ToString();
+        }
+
         private void FixedUpdate()
         {
             var moveVector = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
@@ -83,17 +88,15 @@ namespace GameDevChef.DirtyCode
             }
         }
 
-        private void HandleSwitchingWeapon()
+        private void RotatePlayerObject()
         {
-            if (Input.mouseScrollDelta.y < 0)
-            {
-                SwitchToPreviousWeapon();
-            }
-
-            if (Input.mouseScrollDelta.y > 0)
-            {
-                SwitchToNextWeapon();
-            }
+            float yaw = Input.GetAxis("Mouse X") * Time.deltaTime * rotationSpeed * mouseSensitivity;
+            float pitch = Input.GetAxis("Mouse Y") * Time.deltaTime * rotationSpeed * mouseSensitivity;
+            currentRotationY += yaw;
+            currentRotationX -= pitch;
+            currentRotationX = Mathf.Clamp(currentRotationX, -90, 90);
+            rifleTransformParent.localRotation = Quaternion.Euler(currentRotationX, 0, 0);
+            transform.localRotation = Quaternion.Euler(0, currentRotationY, 0);
         }
 
         private void HandleShootingWeapon()
@@ -125,18 +128,15 @@ namespace GameDevChef.DirtyCode
             return Input.GetMouseButton(0) && currentShotWaitTime > holdWeapon.GetShootingInterval() && HasEnoughAmmo();
         }
 
-        private void ShootRPG()
+        private bool HasEnoughAmmo()
         {
-            PlayWeaponShotSound();
-            ShootWithProjectile();
+            return currentAmmoNumber > 0;
         }
 
-        private void ShootWithProjectile()
+        private void ShootPistol()
         {
-            Projectile projectile = Instantiate(holdWeapon.GetProjectilePrefab(),
-                holdWeapon.GetBulletSpawnTransform().position,
-                holdWeapon.GetBulletSpawnTransform().rotation);
-            projectile.Init(holdWeapon.GetWeaponDamage(), holdWeapon.GetProjectileSpeed(), holdWeapon.GetImpactClip());
+            PlayWeaponShotSound();
+            ShootWithRaycast();
         }
 
         private void PlayWeaponShotSound()
@@ -144,12 +144,6 @@ namespace GameDevChef.DirtyCode
             mainAudioSource.clip = holdWeapon.GetShotSound();
             mainAudioSource.Stop();
             mainAudioSource.Play();
-        }
-
-        private void ShootRifle()
-        {
-            PlayWeaponShotSound();
-            ShootWithRaycast();
         }
 
         private void ShootWithRaycast()
@@ -164,21 +158,38 @@ namespace GameDevChef.DirtyCode
                 }
             }
         }
-
-        private void ShootPistol()
+      
+        private void ShootRifle()
         {
             PlayWeaponShotSound();
             ShootWithRaycast();
         }
 
-        private void Reload()
+        private void ShootRPG()
         {
-            currentShotWaitTime = 0f;
-            currentAmmoNumber = maxAmmoNumber;
-            mainAudioSource.clip = holdWeapon.GetReloadSound();
-            mainAudioSource.Stop();
-            mainAudioSource.Play();
-            SetAmmoText();
+            PlayWeaponShotSound();
+            ShootWithProjectile();
+        }
+
+        private void ShootWithProjectile()
+        {
+            Projectile projectile = Instantiate(holdWeapon.GetProjectilePrefab(),
+                holdWeapon.GetBulletSpawnTransform().position,
+                holdWeapon.GetBulletSpawnTransform().rotation);
+            projectile.Init(holdWeapon.GetWeaponDamage(), holdWeapon.GetProjectileSpeed(), holdWeapon.GetImpactClip());
+        }
+
+        private void HandleSwitchingWeapon()
+        {
+            if (Input.mouseScrollDelta.y < 0)
+            {
+                SwitchToPreviousWeapon();
+            }
+
+            if (Input.mouseScrollDelta.y > 0)
+            {
+                SwitchToNextWeapon();
+            }
         }
 
         private void SwitchToNextWeapon()
@@ -188,8 +199,6 @@ namespace GameDevChef.DirtyCode
                 currentWeaponIndex = 0;
             ChangeHoldWeapon();
         }
-
-       
 
         private void SwitchToPreviousWeapon()
         {
@@ -209,25 +218,14 @@ namespace GameDevChef.DirtyCode
             holdWeapon.gameObject.SetActive(true);
         }
 
-        private bool HasEnoughAmmo()
+        private void Reload()
         {
-            return currentAmmoNumber > 0;
-        }
-
-        private void RotatePlayerObject()
-        {
-            float yaw = Input.GetAxis("Mouse X") * Time.deltaTime * rotationSpeed * mouseSensitivity;
-            float pitch = Input.GetAxis("Mouse Y") * Time.deltaTime * rotationSpeed * mouseSensitivity;
-            currentRotationY += yaw;
-            currentRotationX -= pitch;
-            currentRotationX = Mathf.Clamp(currentRotationX, -90, 90);
-            rifleTransformParent.localRotation = Quaternion.Euler(currentRotationX, 0, 0);
-            transform.localRotation = Quaternion.Euler(0, currentRotationY, 0);
-        }
-
-        public void SetAmmoText()
-        {
-            ammoText.text = currentAmmoNumber.ToString();
+            currentShotWaitTime = 0f;
+            currentAmmoNumber = maxAmmoNumber;
+            mainAudioSource.clip = holdWeapon.GetReloadSound();
+            mainAudioSource.Stop();
+            mainAudioSource.Play();
+            SetAmmoText();
         }
     }
 }
