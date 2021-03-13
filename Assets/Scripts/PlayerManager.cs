@@ -127,21 +127,33 @@ namespace GameDevChef.DirtyCode
 
         private void ShootRPG()
         {
-            
-            mainAudioSource.clip = holdWeapon.GetShotSound();
-            mainAudioSource.Stop();
-            mainAudioSource.Play();
+            PlayWeaponShotSound();
+            ShootWithProjectile();
+        }
+
+        private void ShootWithProjectile()
+        {
             Projectile projectile = Instantiate(holdWeapon.GetProjectilePrefab(),
                 holdWeapon.GetBulletSpawnTransform().position,
                 holdWeapon.GetBulletSpawnTransform().rotation);
             projectile.Init(holdWeapon.GetWeaponDamage(), holdWeapon.GetProjectileSpeed(), holdWeapon.GetImpactClip());
         }
 
-        private void ShootRifle()
+        private void PlayWeaponShotSound()
         {
             mainAudioSource.clip = holdWeapon.GetShotSound();
             mainAudioSource.Stop();
             mainAudioSource.Play();
+        }
+
+        private void ShootRifle()
+        {
+            PlayWeaponShotSound();
+            ShootWithRaycast();
+        }
+
+        private void ShootWithRaycast()
+        {
             if (Physics.Raycast(Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)), out RaycastHit hit2, holdWeapon.GetWeaponRange()))
             {
                 EnemyManager controller = hit2.collider.GetComponentInParent<EnemyManager>();
@@ -155,18 +167,8 @@ namespace GameDevChef.DirtyCode
 
         private void ShootPistol()
         {
-            mainAudioSource.clip = holdWeapon.GetShotSound();
-            mainAudioSource.Stop();
-            mainAudioSource.Play();
-            if (Physics.Raycast(Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)), out RaycastHit hit1, holdWeapon.GetWeaponRange()))
-            {
-                EnemyManager controller = hit1.collider.GetComponentInParent<EnemyManager>();
-                Vector3 direction = hit1.point - holdWeapon.GetBulletSpawnTransform().position;
-                if (controller)
-                {
-                    controller.OnEnemyShot(direction, hit1.collider.GetComponent<Rigidbody>(), holdWeapon.GetWeaponDamage());
-                }
-            }
+            PlayWeaponShotSound();
+            ShootWithRaycast();
         }
 
         private void Reload()
@@ -184,19 +186,21 @@ namespace GameDevChef.DirtyCode
             currentWeaponIndex++;
             if (currentWeaponIndex > avaliableWeapons.Length - 1)
                 currentWeaponIndex = 0;
-            holdWeapon = avaliableWeapons[currentWeaponIndex];
-            foreach (var weapon in avaliableWeapons)
-            {
-                weapon.gameObject.SetActive(false);
-            }
-            holdWeapon.gameObject.SetActive(true);
+            ChangeHoldWeapon();
         }
+
+       
 
         private void SwitchToPreviousWeapon()
         {
             currentWeaponIndex--;
             if (currentWeaponIndex < 0)
                 currentWeaponIndex = avaliableWeapons.Length - 1;
+            ChangeHoldWeapon();
+        }
+
+        private void ChangeHoldWeapon()
+        {
             holdWeapon = avaliableWeapons[currentWeaponIndex];
             foreach (var weapon in avaliableWeapons)
             {

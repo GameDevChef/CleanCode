@@ -3845,6 +3845,7 @@ MonoBehaviour:
   mouseSensitivity: 1
   mainAudioSource: {fileID: 904319585}
   ammoText: {fileID: 413519341}
+  maxAmmoNumber: 30
 --- !u!82 &904319585
 AudioSource:
   m_ObjectHideFlags: 0
