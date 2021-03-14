@@ -71,6 +71,7 @@ namespace GameDevChef.DirtyCode
 
         private void Update()
         {
+            //Changing weapon
             if(Input.mouseScrollDelta.y < 0)
             {
                 currentWeaponIndex--;
@@ -97,6 +98,7 @@ namespace GameDevChef.DirtyCode
                 holdWeapon.gameObject.SetActive(true);
             }
 
+            //Running
             if (Input.GetKey(KeyCode.LeftShift))
             {
                 running = true;
@@ -106,6 +108,7 @@ namespace GameDevChef.DirtyCode
                 running = false;
             }
 
+            //Reloading
             if (Input.GetKeyDown(KeyCode.R))
             {
                 curWaitTime = 0f;
@@ -116,8 +119,16 @@ namespace GameDevChef.DirtyCode
                 SetAmmoText();
             }
 
+            //float yaw = Input.GetAxis("Mouse X") * Time.deltaTime * rotSpeed * mouseSens;
+            //float pitch = Input.GetAxis("Mouse Y") * Time.deltaTime * rotSpeed * mouseSens;
+            //curRotationY += yaw;
+            //curRotationX -= pitch;
+            //curRotationX = Mathf.Clamp(curRotationX, -90, 90);
+            //rifleTransParent.localRotation = Quaternion.Euler(curRotationX, 0, 0);
+            //transform.localRotation = Quaternion.Euler(0, curRotationY, 0);
             Rotate();
 
+            //Shooting
             curWaitTime += Time.deltaTime;
             if (Input.GetMouseButton(0) && curWaitTime > holdWeapon.GetShootingInterval() && !HasNotEnoughAmmo())
             {
@@ -171,6 +182,7 @@ namespace GameDevChef.DirtyCode
             }
         }
 
+        //Check if there if any ammo left
         private bool HasNotEnoughAmmo()
         {
             return curAmmo <= 0;
