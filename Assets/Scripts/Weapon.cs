@@ -2,33 +2,43 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public enum WeaponType
-{
-    Pistol, Rilfe, RPG
-}
 
-public class Weapon : MonoBehaviour
+
+public abstract class Weapon : MonoBehaviour
 {
-    [SerializeField] private WeaponType weaponType;
-    [SerializeField] private float range;
+    [SerializeField] protected float range;
     [SerializeField] private int damage;
-    [SerializeField] private int projectileSpeed;
     [SerializeField] private AudioClip shotClip;
     [SerializeField] private AudioClip reloadClip;
-    [SerializeField] private AudioClip impactClip;
-    [SerializeField] private Projectile projectilePrefab;
-    [SerializeField] private Transform bulletSpawnTransform;
-
+    [SerializeField] private int maxAmmo;
+    [SerializeField] protected Transform bulletSpawnTransform;
+    [SerializeField] private AudioSource audioSource;
     [SerializeField] private float shootingInterval;
 
-    public WeaponType GetWeaponType()
+    private int currentAmmo;
+
+    private void Awake()
     {
-        return weaponType;
+        currentAmmo = maxAmmo;
     }
 
-    public float GetWeaponRange()
+    public virtual void Shoot()
     {
-        return range;
+        PlayAudioClip(shotClip);
+        currentAmmo--;
+    }
+
+    public void Reload()
+    {
+        PlayAudioClip(reloadClip);
+        currentAmmo = maxAmmo;
+    }
+
+    private void PlayAudioClip(AudioClip clip)
+    {
+        audioSource.clip = clip;
+        audioSource.Stop();
+        audioSource.Play();
     }
 
     public int GetWeaponDamage()
@@ -36,38 +46,18 @@ public class Weapon : MonoBehaviour
         return damage;
     }
 
-    public AudioClip GetShotSound()
+    internal int GetCurrentAmmo()
     {
-        return shotClip;
-    }
-
-    public AudioClip GetReloadSound()
-    {
-        return reloadClip;
-    }
-
-    public Projectile GetProjectilePrefab()
-    {
-        return projectilePrefab;
-    }
-
-    public int GetProjectileSpeed()
-    {
-        return projectileSpeed;
-    }
-
-    public AudioClip GetImpactClip()
-    {
-        return impactClip;
-    }
-
-    public Transform GetBulletSpawnTransform()
-    {
-        return bulletSpawnTransform;
+        return currentAmmo;
     }
 
     public float GetShootingInterval()
     {
         return shootingInterval;
     }
+
+    public bool HasEnoughAmmo()
+    {
+        return currentAmmo > 0;
+    } 
 }

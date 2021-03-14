@@ -3,42 +3,40 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GameDevChef.DirtyCode
+public class EnemyManager : MonoBehaviour
 {
-    public class EnemyManager : MonoBehaviour
+    [SerializeField] private int maxHealth;
+    private Animator animator;
+    private int curHealth;
+    private Rigidbody[] rigidbodies;
+
+    private void Awake()
     {
-        [SerializeField] private int maxHealth;
-        private Animator animator;
-        private int curHealth;
-        private Rigidbody[] rigidbodies;
- 
-        private void Awake()
+        rigidbodies = GetComponentsInChildren<Rigidbody>();
+        animator = GetComponent<Animator>();
+        curHealth = maxHealth;
+        foreach (var rb in rigidbodies)
         {
-            rigidbodies = GetComponentsInChildren<Rigidbody>();
-            animator = GetComponent<Animator>();
-            curHealth = maxHealth;
-            foreach (var rb in rigidbodies)
-            {
-                rb.isKinematic = true;
-                rb.interpolation = RigidbodyInterpolation.None;
+            rb.isKinematic = true;
+            rb.interpolation = RigidbodyInterpolation.None;
 
-            }
         }
+    }
 
-        public void OnEnemyShot(Vector3 shootDirection, Rigidbody shotRB, int damage)
+    public void OnEnemyShot(Vector3 shootDirection, Rigidbody shotRB, int damage)
+    {
+        curHealth -= damage;
+        animator.enabled = false;
+        foreach (var rb in rigidbodies)
         {
-            curHealth -= damage;
-            animator.enabled = false;
-            foreach (var rb in rigidbodies)
-            {
-                rb.isKinematic = false;
-                rb.interpolation = RigidbodyInterpolation.Interpolate;
-            }
-            if (shotRB)
-            {
-                shotRB.AddForce(shootDirection.normalized * 100f, ForceMode.Impulse);
-            }
+            rb.isKinematic = false;
+            rb.interpolation = RigidbodyInterpolation.Interpolate;
+        }
+        if (shotRB)
+        {
+            shotRB.AddForce(shootDirection.normalized * 100f, ForceMode.Impulse);
         }
     }
 }
+
 

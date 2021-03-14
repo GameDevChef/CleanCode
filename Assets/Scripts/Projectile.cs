@@ -1,4 +1,4 @@
-﻿using GameDevChef.DirtyCode;
+﻿
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,11 +13,11 @@ public class Projectile : MonoBehaviour
     {
         rigidody = GetComponent<Rigidbody>();
     }
-    public void Init(int damage, int speed, AudioClip impactClip)
+    public void Init(ProjectileWeapon weapon)
     {
-        this.damage = damage;
-        this.impactClip = impactClip;
-        rigidody.velocity = transform.forward * speed;
+        this.damage = weapon.GetWeaponDamage();
+        this.impactClip = weapon.GetImpactClip();
+        rigidody.velocity = transform.forward * weapon.GetProjectileSpeed();
 
     }
 
@@ -30,4 +30,6 @@ public class Projectile : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+
 }
