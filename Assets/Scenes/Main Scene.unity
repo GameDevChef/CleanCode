@@ -3815,7 +3815,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 904319581}
   m_LocalRotation: {x: -0, y: 0.8410862, z: -0, w: 0.5409012}
-  m_LocalPosition: {x: 0, y: 1.07, z: 0}
+  m_LocalPosition: {x: -29.1, y: 2.49, z: -13}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1076979108}
@@ -3834,13 +3834,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5ccf19f5baaed141a9a201a15fdf6da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  avaliableWeapons: []
-  rifleTransformParent: {fileID: 0}
+  weapons:
+  - {fileID: 1487772698757619}
+  - {fileID: 8480955938167440800}
+  - {fileID: 4953162197231241699}
+  rifleTransParent: {fileID: 1076979108}
   walkSpeed: 5
   runSpeed: 10
-  rotationSpeed: 0
-  mouseSensitivity: 0
-  audioSource: {fileID: 0}
+  rotSpeed: 45
+  mouseSens: 2
+  source: {fileID: 904319585}
   ammoText: {fileID: 413519341}
 --- !u!82 &904319585
 AudioSource:
