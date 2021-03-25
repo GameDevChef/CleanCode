@@ -4,27 +4,26 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    [SerializeField] private Transform rifleTransformParent;
     [SerializeField] private float walkSpeed;
     [SerializeField] private float runSpeed;
     [SerializeField] private float rotationSpeed;
     [SerializeField] private float mouseSensitivity;
-    [SerializeField] private Transform rifleTransformParent;
+    [SerializeField] private float minXRotation;
+    [SerializeField] private float maxXRotation;
 
-
-    private InputReceiver inputReciever;
-
-    private Rigidbody rigidbody;
+    private InputReciever inputReciever;
+    private Rigidbody rigodbody;
     private float currentRotationY;
     private float currentRotationX;
 
     private void Awake()
     {
-        inputReciever = GetComponent<InputReceiver>();
-        rigidbody = GetComponent<Rigidbody>();
+        inputReciever = GetComponent<InputReciever>();
+        rigodbody = GetComponent<Rigidbody>();
         currentRotationY = transform.eulerAngles.y;
         currentRotationX = transform.eulerAngles.x;
     }
-
     private void FixedUpdate()
     {
         Vector3 worldMoveVector = CalculateWorldMoveVector();
@@ -36,6 +35,12 @@ public class PlayerMovement : MonoBehaviour
         RotatePlayerObject();
     }
 
+    private void SetRigidbodyVelocity(Vector3 worldMoveVector)
+    {
+        float moveSpeed = inputReciever.IsRunning ? runSpeed : walkSpeed;
+        rigodbody.velocity = worldMoveVector.normalized * moveSpeed;
+    }
+
     private Vector3 CalculateWorldMoveVector()
     {
         var moveVector = new Vector3(inputReciever.HorizontalInput, 0f, inputReciever.VerticalInput);
@@ -44,19 +49,13 @@ public class PlayerMovement : MonoBehaviour
         return worldMoveVector;
     }
 
-    private void SetRigidbodyVelocity(Vector3 worldMoveVector)
-    {
-        float moveSpeed = inputReciever.IsRunning ? runSpeed : walkSpeed;
-        rigidbody.velocity = worldMoveVector.normalized * moveSpeed;
-    }
-
     private void RotatePlayerObject()
     {
         float yaw = inputReciever.MouseInputX * Time.deltaTime * rotationSpeed * mouseSensitivity;
         float pitch = inputReciever.MouseInputY * Time.deltaTime * rotationSpeed * mouseSensitivity;
         currentRotationY += yaw;
         currentRotationX -= pitch;
-        currentRotationX = Mathf.Clamp(currentRotationX, -90, 90);
+        currentRotationX = Mathf.Clamp(currentRotationX, minXRotation, maxXRotation);
         rifleTransformParent.localRotation = Quaternion.Euler(currentRotationX, 0, 0);
         transform.localRotation = Quaternion.Euler(0, currentRotationY, 0);
     }

@@ -4,106 +4,103 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace GameDevChef.DirtyCode
+
+public class PlayerShooting : MonoBehaviour
 {
-    public class PlayerShooting : MonoBehaviour
+    [SerializeField] private Weapon[] avaliableWeapons;
+    [SerializeField] private Text ammoText;
+    
+    private InputReciever inputReciever;
+    private Weapon holdWeapon;
+    private int currentWeaponIndex;
+    private float currentShootWaitTime;
+   
+    private void Awake()
     {
-        [SerializeField] private Weapon[] avaliableWeapons;      
-        [SerializeField] private Text ammoText;
+        inputReciever = GetComponent<InputReciever>();
+    }
 
-        private InputReceiver inputReciever;
-        private Weapon holdWeapon;
-        private int currentWeaponIndex;
-        private float currentShotWaitTime;
+    private void Start()
+    {
+        SetActiveWeapon();
+        Cursor.lockState = CursorLockMode.Locked;
+    }
 
-        private void Awake()
+    private void SetActiveWeapon()
+    {
+        holdWeapon = avaliableWeapons[currentWeaponIndex];
+        foreach (var weapon in avaliableWeapons)
         {
-            inputReciever = GetComponent<InputReceiver>();
+            weapon.gameObject.SetActive(false);
+        }
+        holdWeapon.gameObject.SetActive(true);
+        SetAmmoText();
+    }
+
+    public void SetAmmoText()
+    {
+        ammoText.text = holdWeapon.GetCurrentAmmo().ToString();
+    }
+
+    private void Update()
+    {     
+        HandleSwitchingWeapons();
+        HandleShoting();
+        if (inputReciever.IsReloading)
+        {
+            Reload();
+        }
+    }
+  
+
+    private void HandleSwitchingWeapons()
+    {
+        if (inputReciever.IsScrollingDown)
+        {
+            SwitchToPreviousWeapon();
         }
 
-        private void Start()
+        if (inputReciever.IsScrollingUp)
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            ChangeHoldWeapon();
+            SwitchToNextWeapon();
         }
+    }
 
-        public void SetAmmoText()
+    private void SwitchToPreviousWeapon()
+    {
+        currentWeaponIndex--;
+        if (currentWeaponIndex < 0)
+            currentWeaponIndex = avaliableWeapons.Length - 1;
+        SetActiveWeapon();
+    }
+
+    private void SwitchToNextWeapon()
+    {
+        currentWeaponIndex++;
+        if (currentWeaponIndex > avaliableWeapons.Length - 1)
+            currentWeaponIndex = 0;
+        SetActiveWeapon();
+    }
+
+    private void HandleShoting()
+    {
+        currentShootWaitTime += Time.deltaTime;
+        if (CheckIfCanShoot())
         {
-            ammoText.text = holdWeapon.GetCurrentAmmo().ToString();
-        }    
-
-        private void Update()
-        {
-            HandleShootingWeapon();
-            HandleSwitchingWeapon();
-            currentShotWaitTime += Time.deltaTime;
-
-            if (inputReciever.IsReloading)
-            {
-                Reload();
-            }
-        }  
-
-        private void HandleShootingWeapon()
-        {
-            if (CheckIfCanShoot())
-            {
-                currentShotWaitTime = 0;
-                holdWeapon.Shot();
-                SetAmmoText();
-            }
+            currentShootWaitTime = 0;
+            holdWeapon.Shoot();
+            SetAmmoText();          
         }
+    }
 
-        private bool CheckIfCanShoot()
-        {
-            return inputReciever.IsShooting && currentShotWaitTime > holdWeapon.GetShootingInterval() && holdWeapon.HasEnoughAmmo();
-        }
-     
-        private void HandleSwitchingWeapon()
-        {
-            if (Input.mouseScrollDelta.y < 0)
-            {
-                SwitchToPreviousWeapon();
-            }
+    private bool CheckIfCanShoot()
+    {
+        return inputReciever.IsShooting && currentShootWaitTime > holdWeapon.GetShootingInterval() && holdWeapon.HasEnoughAmmo();
+    }
 
-            if (Input.mouseScrollDelta.y > 0)
-            {
-                SwitchToNextWeapon();
-            }
-        }
-
-        private void SwitchToNextWeapon()
-        {
-            currentWeaponIndex++;
-            if (currentWeaponIndex > avaliableWeapons.Length - 1)
-                currentWeaponIndex = 0;
-            ChangeHoldWeapon();
-        }
-
-        private void SwitchToPreviousWeapon()
-        {
-            currentWeaponIndex--;
-            if (currentWeaponIndex < 0)
-                currentWeaponIndex = avaliableWeapons.Length - 1;
-            ChangeHoldWeapon();
-        }
-
-        private void ChangeHoldWeapon()
-        {
-            holdWeapon = avaliableWeapons[currentWeaponIndex];
-            foreach (var weapon in avaliableWeapons)
-            {
-                weapon.gameObject.SetActive(false);
-            }
-            holdWeapon.gameObject.SetActive(true);
-            SetAmmoText();
-        }
-
-        private void Reload()
-        {
-            currentShotWaitTime = 0f;            
-            holdWeapon.Reload();
-            SetAmmoText();
-        }
+    private void Reload()
+    {
+        holdWeapon.Reload();
+        SetAmmoText();
     }
 }

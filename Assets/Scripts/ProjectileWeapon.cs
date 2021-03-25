@@ -1,22 +1,21 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ProjectileWeapon : Weapon
 {
-
-    [SerializeField] private float projectileSpeed;
-    [SerializeField] private Projectile projectilePrefab;
     [SerializeField] private AudioClip impactClip;
-    public override void Shot()
+    [SerializeField] private int projectileSpeed;
+    [SerializeField] private Projectile projectilePrefab;
+
+    public override void Shoot()
     {
-        base.Shot();
+        base.Shoot();
         Projectile projectile = Instantiate(projectilePrefab, bulletSpawnTransform.position, bulletSpawnTransform.rotation);
         projectile.Init(this);
     }
 
-    public float GetProjectileSpeed()
+    public int GetProjectileSpeed()
     {
         return projectileSpeed;
     }

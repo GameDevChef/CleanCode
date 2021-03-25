@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Assets/3rdParty/Stylized Grass Texture/Materials/Stylize Terrain Diffuse.mat.meta
+guid: c7d0747bd7053804da8250ca0ea203d4
+=======
 guid: 7475c0152fb3fbb48a312d226cc846bb
+>>>>>>> Clean_Version:Assets/3rdParty/Stylized Grass Texture/Materials/Stylize Terrain.mat.meta
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 0

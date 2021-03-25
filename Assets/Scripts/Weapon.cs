@@ -3,55 +3,42 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public abstract class Weapon : MonoBehaviour
 {
-    [SerializeField] protected Transform bulletSpawnTransform;
-    [SerializeField] private AudioSource mainAudioSource;
-    [SerializeField] private AudioClip shotClip;
-    [SerializeField] private AudioClip reloadClip;
     [SerializeField] protected float range;
     [SerializeField] private int damage;
-    [SerializeField] private int maxAmmoNumber;
+    [SerializeField] private AudioClip shotClip;
+    [SerializeField] private AudioClip reloadClip;
+    [SerializeField] private int maxAmmo;
+    [SerializeField] protected Transform bulletSpawnTransform;
+    [SerializeField] private AudioSource audioSource;
     [SerializeField] private float shootingInterval;
 
-    private int currentAmmoNumber;
+    private int currentAmmo;
 
     private void Awake()
     {
-        currentAmmoNumber = maxAmmoNumber;
-    }
-    public virtual void Shot()
-    {
-        currentAmmoNumber--;
-        PlayWeaponShotSound();
-    }
-    public virtual void Reload()
-    {
-        currentAmmoNumber = maxAmmoNumber;
-        mainAudioSource.clip = reloadClip;
-        ResetAudioSource();
+        currentAmmo = maxAmmo;
     }
 
-    public bool HasEnoughAmmo()
+    public virtual void Shoot()
     {
-        return currentAmmoNumber > 0;
+        PlayAudioClip(shotClip);
+        currentAmmo--;
     }
 
-    protected void PlayWeaponShotSound()
+    public void Reload()
     {
-        mainAudioSource.clip = shotClip;
-        ResetAudioSource();
+        PlayAudioClip(reloadClip);
+        currentAmmo = maxAmmo;
     }
 
-    private void ResetAudioSource()
+    private void PlayAudioClip(AudioClip clip)
     {
-        mainAudioSource.Stop();
-        mainAudioSource.Play();
-    }
-
-    public int GetCurrentAmmo()
-    {
-        return currentAmmoNumber;
+        audioSource.clip = clip;
+        audioSource.Stop();
+        audioSource.Play();
     }
 
     public int GetWeaponDamage()
@@ -59,10 +46,18 @@ public abstract class Weapon : MonoBehaviour
         return damage;
     }
 
-   
+    internal int GetCurrentAmmo()
+    {
+        return currentAmmo;
+    }
 
     public float GetShootingInterval()
     {
         return shootingInterval;
     }
+
+    public bool HasEnoughAmmo()
+    {
+        return currentAmmo > 0;
+    } 
 }
